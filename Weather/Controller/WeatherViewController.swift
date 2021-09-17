@@ -194,7 +194,6 @@ extension WeatherViewController {
         feelsLikeLabel.topAnchor.constraint(equalTo: weatherLabel.bottomAnchor, constant: 5).isActive = true
         feelsLikeLabel.centerXAnchor.constraint(equalTo: upperContainer.centerXAnchor).isActive = true
         
-        
         centerContainer.topAnchor.constraint(equalTo: upperContainer.bottomAnchor).isActive = true
         centerContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
         centerContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true

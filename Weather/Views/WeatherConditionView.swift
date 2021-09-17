@@ -8,9 +8,9 @@
 import UIKit
 
 class WeatherConditionView: UIView {
-
-    var image: UIImage?
-    var data: String? { didSet {weatherConditionLabel.text = data ?? ""}}
+    
+    var image: UIImage? { didSet { weatherConditionImageView.image = image } }
+    var data: String? { didSet { weatherConditionLabel.text = data ?? ""} }
     
     convenience init?(image: UIImage?, data: String?) {
         self.init()
@@ -60,7 +60,7 @@ class WeatherConditionView: UIView {
         weatherConditionImageView.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
         weatherConditionImageView.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
         weatherConditionImageView.heightAnchor.constraint(equalTo: heightAnchor, multiplier: 0.5).isActive = true
-
+        
         weatherConditionLabel.topAnchor.constraint(equalTo: weatherConditionImageView.bottomAnchor, constant: 5).isActive = true
         weatherConditionLabel.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
         weatherConditionLabel.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
