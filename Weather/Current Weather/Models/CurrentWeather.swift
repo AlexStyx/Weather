@@ -76,7 +76,7 @@ struct CurrentWeather: WeatherData {
     }
     
     init(currentWeatherData: CurrentWeatherData) {
-        self.weatherId = currentWeatherData.weather.first!.id
+        self.weatherId = currentWeatherData.weather.first?.id ?? 0
         self.city = currentWeatherData.name
         self.country = currentWeatherData.sys.country
         self.temperature = currentWeatherData.main.temperature
@@ -86,7 +86,7 @@ struct CurrentWeather: WeatherData {
         self.precipitation = currentWeatherData.rain?.the1H ?? 0
         self.pressure = currentWeatherData.main.pressure
         self.windSpeed = currentWeatherData.wind.speed
-        self.condition = currentWeatherData.weather.first!.main
+        self.condition = currentWeatherData.weather.first?.main ?? ""
     }
 }
 

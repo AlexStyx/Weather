@@ -7,30 +7,46 @@
 
 import Foundation
 
+protocol NetworkServiceDelegate: AnyObject {
+    func didUpdateWeatherData(_ weather: Weather)
+    func didFailWithError(_ error: Error)
+}
+
 final class NetworkService {
+    
+    public var delegate: NetworkServiceDelegate?
     
     public var onCompletion: ((WeatherData) -> ())? // will be used for updating UI in ViewControllers
     
-    //MARK: - fetchData
-    public func fetchData(lat: Double, lon: Double, requestType: RequestType) {
-        var urlString = ""
-        
-        switch requestType {
-        case .weather: urlString = "https://api.openweathermap.org/data/2.5/weather?lat=\(lat)&lon=\(lon)&appid=\(apiKey)&units=metric"
-        case .forecast: urlString = "https://api.openweathermap.org/data/2.5/forecast?lat=\(lat)&lon=\(lon)&appid=\(apiKey)&units=metric"
-        }
-        
-        guard let url = URL(string: urlString) else { return }
-        
-        performRequest(url: url, requestType: requestType)
+    public func fetchData(lat: Double, lon: Double, requestType: DataType) {
+        guard let url = configureURL(params: params(lat: lat, lon: lon), dataType: requestType) else { fatalError("Cannot configure URL") }
+        performRequest(url: url, dataType: requestType)
     }
-    //MARK: - performRequest
-    private func performRequest(url: URL, requestType: RequestType) {
+    
+    private func params(lat: Double, lon: Double) -> [String: String] {
+        [
+            "lat": String(describing: lat),
+            "lon": String(describing: lon),
+            "appid": apiKey,
+            "units": "metric"
+        ]
+    }
+    
+    private func configureURL(params: [String: String], dataType: DataType) -> URL? {
+        var components = URLComponents()
+        components.scheme = "https"
+        components.host = "api.openweathermap.org"
+        components.path = "/data/2.5/\(dataType == .weather ? "weather" : "forecast")"
+        components.queryItems = params.map {URLQueryItem(name: $0, value: $1)}
+        return components.url
+    }
+    
+    private func performRequest(url: URL, dataType: DataType) {
         let session = URLSession(configuration: .default)
         let task = session.dataTask(with: url) { [weak self] (data, response, error) in
             if let data = data {
-                var result = self?.parseJSON(data: data, typeOfRequest: requestType)
-                switch requestType {
+                var result = self?.parseJSON(data: data, typeOfRequest: dataType)
+                switch dataType {
                 case .weather: result = result as? CurrentWeather;
                 case .forecast: result = result as? Forecast
                 }
@@ -45,7 +61,7 @@ final class NetworkService {
     }
     
     //MARK: - parseJSON 
-    private func parseJSON(data: Data, typeOfRequest: RequestType) -> WeatherData? {
+    private func parseJSON(data: Data, typeOfRequest: DataType) -> WeatherData? {
         let decoder = JSONDecoder()
         do {
             switch typeOfRequest {
@@ -64,7 +80,7 @@ final class NetworkService {
         return nil
     }
     
-    enum RequestType {
+    enum DataType {
         case weather
         case forecast
     }

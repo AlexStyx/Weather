@@ -25,7 +25,8 @@ final class ForecastTableViewController: UIViewController {
             locationManager.requestLocation()
         }
         networkService.onCompletion = { [weak self] forecast in
-            self?.forecast = forecast as! Forecast
+            guard let forecast = forecast as? Forecast else { return }
+            self?.forecast = forecast
             DispatchQueue.main.async {
                 self?.navigationItem.title = self?.forecast.city
                 self?.tableView.reloadData()
@@ -44,7 +45,7 @@ final class ForecastTableViewController: UIViewController {
     private let tableView: UITableView = {
         let tableView = UITableView()
         tableView.translatesAutoresizingMaskIntoConstraints = false
-        tableView.register(WeatherTableViewCell.self, forCellReuseIdentifier: "weatherCell")
+        tableView.register(ForecastTableViewCell.self, forCellReuseIdentifier: "weatherCell")
         return tableView
     }()
 }
@@ -58,7 +59,7 @@ extension ForecastTableViewController: UITableViewDelegate, UITableViewDataSourc
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "weatherCell", for: indexPath) as! WeatherTableViewCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: "weatherCell", for: indexPath) as! ForecastTableViewCell
         let section = indexPath.section
         let dailyForecast = forecast.forecast[section + 1]!
         let forecastItem = dailyForecast[indexPath.row]

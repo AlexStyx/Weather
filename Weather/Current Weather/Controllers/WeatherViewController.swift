@@ -19,9 +19,10 @@ final class WeatherViewController: UIViewController {
         addSubviews()
         setupLayout()
         networkService.onCompletion = { [weak self] weather in
-            let currentWeather = weather as! CurrentWeather
-            DispatchQueue.main.async {
-                self?.updateUI(currentWeather: currentWeather)
+            if let currentWeather = weather as? CurrentWeather {
+                DispatchQueue.main.async {
+                    self?.updateUI(currentWeather: currentWeather)
+                }
             }
         }
         
@@ -194,7 +195,7 @@ extension WeatherViewController {
         feelsLikeLabel.topAnchor.constraint(equalTo: weatherLabel.bottomAnchor, constant: 5).isActive = true
         feelsLikeLabel.centerXAnchor.constraint(equalTo: upperContainer.centerXAnchor).isActive = true
         
-        centerContainer.topAnchor.constraint(equalTo: upperContainer.bottomAnchor).isActive = true
+        centerContainer.topAnchor.constraint(equalTo: upperContainer.bottomAnchor, constant: 20).isActive = true
         centerContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
         centerContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
         centerContainer.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.27).isActive = true
